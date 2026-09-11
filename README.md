@@ -45,11 +45,11 @@ Fijar un suelo de precio en demarca no inferior al coste medio de compra, aplica
 
 | Documento                                                   | Contenido                                                                                                                             |
 | :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| [Parte 1: Análisis completo](01-analisis-completo.md)       | El problema de negocio, estructura del dashboard página a página, simulación de recuperación, conclusiones y recomendaciones          |
-| [Parte 2: Arquitectura técnica](02-arquitectura-tecnica.md) | Pipeline de construcción, modelo de datos, columnas calculadas, origen de los datos, anomalías detectadas y limitaciones              |
-| [Consultas SQL](consultas.sql)                              | Extracción de cada tabla del modelo, referenciadas desde la Parte 2                                                                   |
-| [Auditoría de datos](auditoria.md)                          | Las 15 comprobaciones de calidad de datos ejecutadas sobre la base cruda, referenciadas desde la Parte 2                              |
-| [Medidas DAX](dax.md)                                       | Las 36 medidas y columnas calculadas del modelo, con propósito de negocio y comentarios línea a línea, referenciadas desde la Parte 2 |
+| [Parte 1: Análisis completo](docs/01-análisis-completo.md)       | El problema de negocio, estructura del dashboard página a página, simulación de recuperación, conclusiones y recomendaciones          |
+| [Parte 2: Arquitectura técnica](docs/02-arquitectura-tecnica.md) | Pipeline de construcción, modelo de datos, columnas calculadas, origen de los datos, anomalías detectadas y limitaciones              |
+| [Consultas SQL](SQL/consultas.sql)                              | Extracción de cada tabla del modelo, referenciadas desde la Parte 2                                                                   |
+| [Auditoría de datos](SQL/auditoria.md)                          | Las 15 comprobaciones de calidad de datos ejecutadas sobre la base cruda, referenciadas desde la Parte 2                              |
+| [Medidas DAX](DAX/dax.md)                                       | Las 36 medidas y columnas calculadas del modelo, con propósito de negocio y comentarios línea a línea, referenciadas desde la Parte 2 |
 
 ---
 ## Requisitos y cómo reproducir
@@ -103,4 +103,4 @@ Fijar un suelo de precio en demarca no inferior al coste medio de compra, aplica
 
 ## Licencia
 
-© Jose Maderas. Publicado bajo licencia MIT: se autoriza el uso, copia, modificación y distribución de este proyecto, incluso con fines comerciales, siempre que se mantenga el aviso de copyright original. El software se proporciona "tal cual", sin garantía de ningún tipo. Ver [LICENSE](https://claude.ai/chat/LICENSE) para el texto completo.
+© Jose Maderas. Publicado bajo licencia MIT: se autoriza el uso, copia, modificación y distribución de este proyecto, incluso con fines comerciales, siempre que se mantenga el aviso de copyright original. El software se proporciona "tal cual", sin garantía de ningún tipo. Ver [LICENSE](LICENSE) para el texto completo.
