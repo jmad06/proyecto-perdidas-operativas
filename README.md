@@ -2,7 +2,7 @@
 
 Análisis del deterioro económico de stock (mermas, demarcas y alteraciones) en una frutería con inventario perecedero, sobre 7 meses de operación (enero–julio 2026) y más de 64.000 registros.
 
-![Página 1 del dashboard: resumen](docs/img/dashboard-pagina1-resumen.png)
+![Demo del dashboard](docs/img/dashboard.gif)
 
 ---
 
