@@ -1,0 +1,6 @@
+~$*.pbix
+~$*.xlsx
+.env
+*credentials*
+.DS_Store
+Thumbs.db
