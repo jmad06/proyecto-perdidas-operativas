@@ -86,11 +86,11 @@ La base de datos `fruit_store.db` es un dataset sintético, generado para modela
 ---
 ## Consultas SQL
 
-El detalle completo de las consultas de extracción utilizadas para nutrir el modelo de Power BI está en ``consultas.sql``, organizado por tabla de origen, en el mismo orden que las tablas descritas en [Modelo de datos](#modelo-de-datos)
+El detalle completo de las consultas de extracción utilizadas para nutrir el modelo de Power BI está en [consultas.sql](../SQL/consultas.sql), organizado por tabla de origen, en el mismo orden que las tablas descritas en [Modelo de datos](#modelo-de-datos)
 
 Cada consulta extrae únicamente las columnas necesarias para el modelo (sin `SELECT *`) y aplica el filtro de ventana temporal del proyecto (``fecha >= '2026-01-01' AND fecha < '2026-08-01'``) en las tablas de hechos con grano diario.
 
-Las cifras de [Origen de los datos y anomalías detectadas](#origen-de-los-datos-y-anomalías-detectadas) (duplicados, exclusiones, sensibilidad de bases de coste/precio, cobertura y conciliación) se verifican en SQL en `auditoria.md`, en la misma carpeta `SQL/`.
+Las cifras de [Origen de los datos y anomalías detectadas](#origen-de-los-datos-y-anomalías-detectadas) (duplicados, exclusiones, sensibilidad de bases de coste/precio, cobertura y conciliación) se verifican en SQL en [auditoria.md](../SQL/auditoria.md), en la misma carpeta `SQL/`.
 
 >Nota de nomenclatura: las consultas hacen referencia a `ventas_linea` y `compras_linea`, los nombres de las tablas en el origen `fruit_store.db`. Power Query renombra ambas a `ventas` y `compras` al importar, para mantener consistencia con el resto de tablas de hechos del modelo (ver [Modelo de datos](#modelo-de-datos)); el detalle línea a línea de las medidas DAX y su documentación en `DAX.md` usa siempre el nombre ya normalizado (`ventas`, `compras`).
 
