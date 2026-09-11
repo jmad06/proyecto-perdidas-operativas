@@ -90,6 +90,8 @@ Fijar un suelo de precio en demarca no inferior al coste medio de compra, aplica
 │	    └── dashboard-pagina3-frecuencia.png
 │	    └── dashboard-pagina4-demarcas.png
 │	    └── dashboard-pagina5-simulación.png
+├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
