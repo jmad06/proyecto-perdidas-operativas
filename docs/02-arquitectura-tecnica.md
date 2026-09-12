@@ -21,13 +21,15 @@ Parte 2 de 2 de la documentación ampliada del proyecto. Cubre el pipeline de co
 
 El proyecto sigue un pipeline de 9 etapas, desde el diseño de la base de datos hasta la documentación final:
 
-0. Diseño de la base de datos SQLite 3 mediante IA y chequeo de anomalías.
-1. Conexión SQLite → Power BI vía driver ODBC sobre `fruit_store.db`, en modo Import.
-2. Consultas SQL de extracción de las tablas de dimensiones y hechos.
-3. Evaluación de calidad en Power Query: verificación ya realizada en SQL y documentada como chequeo (no como limpieza) de las anomalías conocidas; comprobación de tipos (`fecha` como fecha real, `producto_id` consistente y entero entre tablas); cobertura de `coste_unitario` confirmada en 132 de 142 productos con demarca (92,96 %). Exclusión de los productos con id=251 y 252 (`MATERIAL LOGISTICO (no vendible)`) y id=253 ("sin clasificar"), ninguno de los tres vendible ni relevante para el análisis de deterioro de stock. [Ver auditoría completa](../SQL/auditoria.md)
-4. Modelado de datos y relaciones: `productos` como dimensión central con relación 1:N hacia las tablas de hechos, filtro en una única dirección (`productos` → hechos), y tabla de calendario para las medidas mensuales del periodo enero 2026 - julio 2026.
-5. Tablas de medidas y KPIs en DAX, organizadas en varias tablas `_Medidas` por orden y legibilidad, construidas siempre desde las tablas de detalle. [Ver medidas DAX](../DAX/dax.md)
-6. Construcción del informe visual: las 5 páginas descritas en el documento [01-análisis-completo](01-análisis-completo.md#estructura-del-dashboard), en orden.
+0. Diseño de la base de datos SQLite 3 mediante IA y chequeo de anomalías. Ver [auditoría completa](../SQL/auditoria.md).
+1. Conexión SQLite → Power BI vía driver ODBC sobre `fruit_store.db`, en modo Import. Ver [Requisitos y cómo reproducir](../README.md#requisitos-y-cómo-reproducir).
+2. Consultas SQL de extracción de las tablas de dimensiones y hechos. Ver [consultas.sql](../SQL/consultas.sql).
+3. Evaluación de calidad en Power Query: verificación ya realizada en SQL y documentada como chequeo (no como limpieza) de las anomalías conocidas.
+   3.1. Comprobación de tipos: `fecha` como fecha real, `producto_id` consistente y entero entre tablas.
+   3.2. Exclusión de los productos con id=251 y 252 (`MATERIAL LOGISTICO (no vendible)`) y id=253 ("sin clasificar"), ninguno de los tres vendible ni relevante para el análisis de deterioro de stock. Ver [Origen de los datos y anomalías detectadas](#origen-de-los-datos-y-anomalías-detectadas).
+4. Modelado de datos y relaciones: `productos` como dimensión central con relación 1:N hacia las tablas de hechos, filtro en una única dirección (`productos` → hechos), y tabla de calendario para las medidas mensuales del periodo enero 2026 - julio 2026. Ver [Modelo de datos](#modelo-de-datos).
+5. Tablas de medidas y KPIs en DAX, organizadas en varias tablas `_Medidas` por orden y legibilidad, construidas siempre desde las tablas de detalle. Ver [medidas DAX](../DAX/dax.md).
+6. Construcción del informe visual: las 5 páginas descritas en el documento, en orden. Ver [Estructura del dashboard](01-análisis-completo.md#estructura-del-dashboard).
 7. Aplicación del tema visual UX (tema JSON + fondos por página) una vez cerrado el informe funcional.
 8. Redacción de documentación, en dos partes que separan la relevancia de negocio de la relevancia técnica del proyecto.
 

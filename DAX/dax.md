@@ -1,4 +1,4 @@
-Documento organizado según las 5 carpetas de medidas del modelo (`_Medidas_Pérdidas_operativas`, `_Medidas_ventas_compras`, `_Medidas_Rentabilidad_producto`, `_Medidas_Demarcas_bajocoste`, `_Medidas_Simulación`). Cada medida incluye un comentario de propósito y, cuando la fórmula tiene más de un paso lógico, comentarios inline explicando qué hace cada parte.
+Documento organizado según las 5 carpetas de medidas del modelo (`_Medidas_Pérdidas_operativas`, `_Medidas_Ventas_compras`, `_Medidas_Rentabilidad_producto`, `_Medidas_Demarcas_bajocoste`, `_Medidas_Simulación`). Cada medida incluye un comentario de propósito y, cuando la fórmula tiene más de un paso lógico, comentarios inline explicando qué hace cada parte.
 
 ---
 
@@ -96,9 +96,9 @@ Expresa qué proporción de todos los eventos de pérdida del negocio (mermas + 
 VAR EventosDemarca = CALCULATE (
     COUNTROWS ( demarcas ),
     demarcas[cantidad] > 0,
-    demarcas[pvp_demarca] < demarcas[pvp_original]
+    demarcas[pvp_demarca] < demarcas[pvp_original]   // mismo criterio de demarca válida que en Pérdidas por demarca (€)
 )
-VAR TotalEventos = [Nº Eventos de pérdida]
+VAR TotalEventos = [Nº Eventos de pérdida]   // mermas + demarcas válidas + alteraciones con cantidad > 0
 RETURN
     DIVIDE ( EventosDemarca, TotalEventos, BLANK() )
 ```
@@ -133,8 +133,8 @@ SUMX(
     RETURN
         IF(
             ISBLANK(CosteProd),
-            BLANK(),
-            demarcas[cantidad] * (demarcas[pvp_demarca] - CosteProd)
+            BLANK(),   // sin coste conocido no se puede calcular la aportación real
+            demarcas[cantidad] * (demarcas[pvp_demarca] - CosteProd)   // ingreso real menos coste real, sin filtrar por dirección del cambio de precio
         )
 )
 ```
@@ -254,7 +254,7 @@ VAR VentasACosteEUR =
     SUMX (
         ventas,
         VAR CosteProd = RELATED ( productos[Coste Medio de Compra Histórico (€)] )
-        RETURN IF ( ISBLANK ( CosteProd ), 0, ventas[cantidad] * CosteProd )
+        RETURN IF ( ISBLANK ( CosteProd ), 0, ventas[cantidad] * CosteProd )   // unidades vendidas valoradas a coste, no a precio de venta
     )
 VAR DemarcasACosteEUR =
     SUMX (
@@ -265,7 +265,7 @@ VAR DemarcasACosteEUR =
 VAR MermasEUR = [Coste de mermas (€)]
 VAR AlteracionesEUR = [Pérdidas por alteraciones (€)]
 RETURN
-    ComprasEUR - VentasACosteEUR - DemarcasACosteEUR - MermasEUR - AlteracionesEUR
+    ComprasEUR - VentasACosteEUR - DemarcasACosteEUR - MermasEUR - AlteracionesEUR   // compras menos todas las salidas trazadas a coste
 ```
 
 ### Var % Pérdida operativa MoM
@@ -278,15 +278,15 @@ VAR MesSeleccionado =
     IF (
         HASONEVALUE ( Calendario[Mes Número] ),
         SELECTEDVALUE ( Calendario[Mes Número] ),
-        CALCULATE ( MAX ( Calendario[Mes Número] ), ALLSELECTED ( Calendario ) )
+        CALCULATE ( MAX ( Calendario[Mes Número] ), ALLSELECTED ( Calendario ) )   // sin mes único seleccionado, usa el último mes visible
     )
 VAR MesAnteriorNumero = MesSeleccionado - 1
 VAR PerdidaMes =
-    CALCULATE ( [Pérdida operativa total (€)], ALL ( Calendario ), Calendario[Mes Número] = MesSeleccionado )
+    CALCULATE ( [Pérdida operativa total (€)], ALL ( Calendario ), Calendario[Mes Número] = MesSeleccionado )   // ALL() ignora el filtro de mes activo para poder fijar el mes manualmente
 VAR PerdidaMesAnterior =
     CALCULATE ( [Pérdida operativa total (€)], ALL ( Calendario ), Calendario[Mes Número] = MesAnteriorNumero )
 RETURN
-    DIVIDE ( PerdidaMes - PerdidaMesAnterior, PerdidaMesAnterior, BLANK () )
+    DIVIDE ( PerdidaMes - PerdidaMesAnterior, PerdidaMesAnterior, BLANK () )   // variación % respecto al mes anterior
 ```
 
 ---
@@ -423,11 +423,11 @@ VAR Resultado =
         RETURN
             IF (
                 ISBLANK ( PrecioMin ),
-                0,
+                0,   // sin coste conocido no se puede evaluar si hay demarca bajo coste
                 CALCULATE (
                     COUNTROWS ( demarcas ),
                     demarcas[cantidad] > 0,
-                    demarcas[pvp_demarca] < PrecioMin - Tolerancia
+                    demarcas[pvp_demarca] < PrecioMin - Tolerancia   // precio de demarca por debajo del coste, con margen de tolerancia
                 )
             )
     )
@@ -450,7 +450,7 @@ SUMX (
         CALCULATE (
             COUNTROWS ( demarcas ),
             demarcas[cantidad] > 0,
-            demarcas[pvp_demarca] < PrecioMin - Tolerancia
+            demarcas[pvp_demarca] < PrecioMin - Tolerancia   // al menos un evento de demarca por debajo del coste
         ) > 0
     RETURN
         IF ( NOT ISBLANK ( PrecioMin ) && TieneDemarcaBajoSuelo, 1, BLANK() )   // BLANK() y no 0: así los productos sin demarca bajo coste no entran en la SUMX y no aparecen como fila en 0 en visuales de detalle por producto
@@ -470,8 +470,8 @@ AVERAGEX (
     VAR PrecioMin = RELATED ( productos[Coste Medio de Compra Histórico (€)] )
     RETURN
         IF (
-            NOT ISBLANK ( PrecioMin ) && demarcas[pvp_demarca] < PrecioMin - Tolerancia,
-            DIVIDE ( PrecioMin - demarcas[pvp_demarca], PrecioMin ),
+            NOT ISBLANK ( PrecioMin ) && demarcas[pvp_demarca] < PrecioMin - Tolerancia,   // solo eventos de demarca bajo coste
+            DIVIDE ( PrecioMin - demarcas[pvp_demarca], PrecioMin ),   // % de descuento sobre el coste, por evento
             BLANK ()
         )
 )
@@ -492,8 +492,8 @@ VAR Resultado =
             IF (
                 demarcas[cantidad] > 0
                     && NOT ISBLANK ( PrecioMin )
-                    && demarcas[pvp_demarca] < PrecioMin - Tolerancia,
-                demarcas[cantidad] * ( PrecioMin - demarcas[pvp_demarca] ),
+                    && demarcas[pvp_demarca] < PrecioMin - Tolerancia,   // línea de demarca válida y por debajo del coste
+                demarcas[cantidad] * ( PrecioMin - demarcas[pvp_demarca] ),   // pérdida por unidad, multiplicada por cantidad
                 0
             )
     )
@@ -526,27 +526,27 @@ VAR ProductoActual = SELECTEDVALUE ( productos[producto_id] )
 VAR PrecioMin =
     CALCULATE (
         SELECTEDVALUE ( productos[Coste Medio de Compra Histórico (€)] ),
-        productos[producto_id] = ProductoActual
+        productos[producto_id] = ProductoActual   // fuerza el contexto al producto actual, aunque la medida se evalúe fuera de una fila de productos
     )
 VAR TablaBajoCoste =
     FILTER (
         demarcas,
         demarcas[cantidad] > 0
-            && RELATED ( productos[Coste Medio de Compra Histórico (€)] ) - Tolerancia > demarcas[pvp_demarca]
+            && RELATED ( productos[Coste Medio de Compra Histórico (€)] ) - Tolerancia > demarcas[pvp_demarca]   // solo demarcas bajo coste de ese producto
     )
 VAR PvpDemarcaPonderado =
     DIVIDE (
         SUMX ( TablaBajoCoste, demarcas[cantidad] * demarcas[pvp_demarca] ),
-        SUMX ( TablaBajoCoste, demarcas[cantidad] )
+        SUMX ( TablaBajoCoste, demarcas[cantidad] )   // precio de demarca real medio, ponderado por cantidad (slider en 0)
     )
 VAR Pct = [Valor de Parámetro Recuperación]
 RETURN
     IF (
         ISBLANK ( ProductoActual )
             || ISBLANK ( PrecioMin )
-            || ISBLANK ( PvpDemarcaPonderado ),
+            || ISBLANK ( PvpDemarcaPonderado ),   // sin alguno de los tres, no hay base para interpolar
         BLANK (),
-        PvpDemarcaPonderado + ( PrecioMin - PvpDemarcaPonderado ) * Pct
+        PvpDemarcaPonderado + ( PrecioMin - PvpDemarcaPonderado ) * Pct   // interpola entre el precio real (Pct=0) y el coste (Pct=1)
     )
 ```
 
@@ -561,7 +561,7 @@ Pérdida evitable máxima (€) =
 
 ### Pérdida evitable simulada (€)
 
-Aplica el porcentaje del slider al techo teórico de recuperación. Con el slider al 100% coincide con Recuperación Potencial a coste (€); con el slider al 50 %, se evita la mitad de esa pérdida directa
+Aplica el porcentaje del slider al techo teórico de recuperación. Con el slider al 100% coincide con `Pérdida evitable máxima (€)`; con el slider al 50 %, se evita la mitad de esa pérdida directa.
 
 ```dax
 Pérdida evitable simulada (€) =
@@ -586,11 +586,11 @@ SELECTEDVALUE ( 'Parámetro Recuperación'[Parámetro Recuperación], 1 )
 Réplica de la medida `Coste Medio de Compra (€)` pero como columna calculada, evaluada una vez por producto al refrescar el modelo en vez de una vez por cada fila de la consulta. Existe porque las 6 medidas de la familia `_Medidas_Demarcas_bajocoste` y `_Medidas_Simulación` necesitan un coste invariante al filtro de Calendario (usaban `REMOVEFILTERS(Calendario)` para forzarlo en una versión anterior), así que no dependen del contexto de fila en el que se llaman: es el mismo valor cada vez, solo cambia de un producto a otro. Convertirlo en columna evita repetir esa evaluación con `CALCULATE` + `REMOVEFILTERS` en cada fila de `demarcas` (5.235 filas hoy; con un dataset real de millones de filas, cada evaluación redundante sí sería medible). No sustituye a la medida `Coste Medio de Compra (€)`, que se mantiene para `Margen Bruto del producto (€)`: esa medida sí debe respetar el filtro de Calendario si el usuario segmenta por mes, algo que una columna calculada no puede hacer al evaluarse una sola vez en el refresh. Son dos cosas con semántica distinta que comparten fórmula por coincidencia (el coste es constante por producto en este dataset), no por diseño, de ahí el nombre distinto para no confundirlas.
 
 ```dax
-[Coste Medio de Compra Histórico (€)] =
+Coste Medio de Compra Histórico (€) =
 DIVIDE (
-    SUMX ( RELATEDTABLE ( compras ), compras[coste_unitario] * compras[cantidad] ),
-    SUMX ( RELATEDTABLE ( compras ), compras[cantidad] ),
-    BLANK ()
+    SUMX ( RELATEDTABLE ( compras ), compras[coste_unitario] * compras[cantidad] ),   // valor total comprado del producto, sin filtro de Calendario
+    SUMX ( RELATEDTABLE ( compras ), compras[cantidad] ),                             // unidades totales compradas del producto
+    BLANK ()                                                                          // BLANK() si el producto no tiene compras registradas
 )
 ```
 

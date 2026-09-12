@@ -49,7 +49,7 @@ Fijar un suelo de precio en demarca no inferior al coste medio de compra, aplica
 | [Parte 2: Arquitectura técnica](docs/02-arquitectura-tecnica.md) | Pipeline de construcción, modelo de datos, columnas calculadas, origen de los datos, anomalías detectadas y limitaciones              |
 | [Consultas SQL](SQL/consultas.sql)                              | Extracción de cada tabla del modelo, referenciadas desde la Parte 2                                                                   |
 | [Auditoría de datos](SQL/auditoria.md)                          | Las 15 comprobaciones de calidad de datos ejecutadas sobre la base cruda, referenciadas desde la Parte 2                              |
-| [Medidas DAX](DAX/dax.md)                                       | Las 36 medidas y columnas calculadas del modelo, con propósito de negocio y comentarios línea a línea, referenciadas desde la Parte 2 |
+| [Medidas DAX](DAX/dax.md)                                       | Las 39 medidas y columnas calculadas del modelo, con propósito de negocio y comentarios línea a línea, referenciadas desde la Parte 2 |
 
 ---
 ## Requisitos y cómo reproducir
